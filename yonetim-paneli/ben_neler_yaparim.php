@@ -12,13 +12,13 @@ $database = new PDO("mysql:host=" . $database_host . ";dbname=" . $database_name
 
 if (isset($_GET['remove']) && isset($_GET['id'])) {
 
-    $query = $database->prepare("DELETE FROM customers WHERE id = ?");
+    $query = $database->prepare("DELETE FROM what_i_do WHERE id = ?");
     $result = $query->execute(array($_GET['id']));
     // burda bir satır silindi ama yukarısının bundna haberi yok.
 }
 
 
-$customers = $database->query("SELECT * FROM customers", PDO::FETCH_ASSOC);
+$what_i_do = $database->query("SELECT * FROM what_i_do", PDO::FETCH_ASSOC);
 // gelen veri diyelim ki 10 satır
 
 ?>
@@ -207,7 +207,7 @@ $customers = $database->query("SELECT * FROM customers", PDO::FETCH_ASSOC);
                     <div class="card">
                         <div class="card-header">
                             <h5>Contextual Classes</h5>
-                            <a href="musteri_ekle.php" class="btn btn-success float-right"><i class="feather mr-2 icon-plus"></i>Müşteri Ekle</a>
+                            <a href="ben_neler_yaparim_ekle.php" class="btn btn-success float-right"><i class="feather mr-2 icon-plus"></i>İçerik Ekle</a>
                         </div>
                         <div class="card-body table-border-style">
                             <div class="table-responsive">
@@ -215,13 +215,13 @@ $customers = $database->query("SELECT * FROM customers", PDO::FETCH_ASSOC);
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Logo</th>
-                                            <th>Ünvan</th>
+                                            <th>Başlık</th>
+                                            <th>Özet</th>
                                             <th>İşlemler</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($customers as $key => $customer) : ?>
+                                        <?php foreach ($what_i_do as $key => $do) : ?>
                                             <?php
                                             /*
                                                 if ($key % 2 == 0) {
@@ -234,18 +234,14 @@ $customers = $database->query("SELECT * FROM customers", PDO::FETCH_ASSOC);
                                             ?>
                                             <tr class="<?= $key % 2 == 0 ? "table-active" : "" ?>">
                                                 <td><?= $key + 1 ?></td>
+                                                <td><?= $do['title'] ?? '' ?></td>
+                                                <td><?= $do['summary'] ?? '' ?></td>
                                                 <td>
-                                                    <img src="assets/images/customers/<?= $customer['logo'] ?? '' ?>" width="50px" height="50px">
-                                                </td>
-                                                <td><?= $customer['title'] ?? '' ?></td>
-                                                <td>
-                                                    <a href="musteri_duzenle.php?id=<?= $customer['id'] ?>" class="btn  btn-icon btn-primary"><i class="feather icon-edit"></i></a>
-                                                    <a href="musteriler.php?remove=yes&id=<?= $customer['id'] ?>" class="btn btn-icon btn-danger text-white"><i class="feather icon-trash"></i></a>
+                                                    <a href="ben_neler_yaparim_duzenle.php?id=<?= $do['id'] ?>" class="btn  btn-icon btn-primary"><i class="feather icon-edit"></i></a>
+                                                    <a href="ben_neler_yaparim.php?remove=yes&id=<?= $do['id'] ?>" class="btn btn-icon btn-danger text-white"><i class="feather icon-trash"></i></a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
-
-
                                     </tbody>
                                 </table>
                             </div>

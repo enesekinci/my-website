@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+
 require('helper/functions.php');
 
 $database_host = "localhost";
@@ -9,18 +10,15 @@ $database_password = "";
 
 $database = new PDO("mysql:host=" . $database_host . ";dbname=" . $database_name . ";charset=utf8", $database_user, $database_password);
 
-
-if (isset($_GET['remove']) && isset($_GET['id'])) {
-
-    $query = $database->prepare("DELETE FROM customers WHERE id = ?");
-    $result = $query->execute(array($_GET['id']));
-    // burda bir satır silindi ama yukarısının bundna haberi yok.
+if (isset($_POST['submit'])) {
+    $query = $database->prepare("INSERT INTO what_i_do SET title = ?, summary = ?");
+    $result = $query->execute(array($_POST['title'], $_POST['summary']));
+    if ($result) {
+        $last_id = $database->lastInsertId();
+        print "insert işlemi başarılı! , $last_id";
+        header('location:ben_neler_yaparim.php');
+    }
 }
-
-
-$customers = $database->query("SELECT * FROM customers", PDO::FETCH_ASSOC);
-// gelen veri diyelim ki 10 satır
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -202,57 +200,47 @@ $customers = $database->query("SELECT * FROM customers", PDO::FETCH_ASSOC);
             <!-- [ breadcrumb ] end -->
             <!-- [ Main Content ] start -->
             <div class="row">
-                <!-- [ Contextual-table ] start -->
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Contextual Classes</h5>
-                            <a href="musteri_ekle.php" class="btn btn-success float-right"><i class="feather mr-2 icon-plus"></i>Müşteri Ekle</a>
-                        </div>
-                        <div class="card-body table-border-style">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Logo</th>
-                                            <th>Ünvan</th>
-                                            <th>İşlemler</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($customers as $key => $customer) : ?>
-                                            <?php
-                                            /*
-                                                if ($key % 2 == 0) {
-                                                    echo "<tr class=\"table-active\">";
-                                                } else {
-                                                    echo "<tr class=\"\">";
-                                                }
-                                            */
+                <!-- [ form-element ] start -->
+                <div class="col-sm-12">
+                    <form action="" method="POST" id="new_content">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>İçerik Bilgileri</h5>
+                                <a href="ben_neler_yaparim.php" class="btn btn-success float-right"><i class="feather mr-2 icon-list"></i>İçerikler</a>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
 
-                                            ?>
-                                            <tr class="<?= $key % 2 == 0 ? "table-active" : "" ?>">
-                                                <td><?= $key + 1 ?></td>
-                                                <td>
-                                                    <img src="assets/images/customers/<?= $customer['logo'] ?? '' ?>" width="50px" height="50px">
-                                                </td>
-                                                <td><?= $customer['title'] ?? '' ?></td>
-                                                <td>
-                                                    <a href="musteri_duzenle.php?id=<?= $customer['id'] ?>" class="btn  btn-icon btn-primary"><i class="feather icon-edit"></i></a>
-                                                    <a href="musteriler.php?remove=yes&id=<?= $customer['id'] ?>" class="btn btn-icon btn-danger text-white"><i class="feather icon-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="title">Başlık</label>
+                                            <input type="text" class="form-control" id="title" name="title" placeholder="Başlık" required>
+                                        </div>
+                                    </div>
 
+                                    <div class="col-md-6"></div>
 
-                                    </tbody>
-                                </table>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="summary">Özet</label>
+                                            <textarea class="form-control" name="summary" id="summary" cols="30" rows="5" required></textarea>
+                                        </div>
+                                    </div>
+
+                                </div>
+
                             </div>
                         </div>
-                    </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <button type="submit" class="btn  btn-primary" name="submit" value="record">    Kaydet</button>
+                            </div>
+                        </div>
+                    </form>
+
                 </div>
-                <!-- [ Contextual-table ] end -->
+                <!-- [ form-element ] end -->
             </div>
             <!-- [ Main Content ] end -->
         </div>

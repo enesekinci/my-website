@@ -34,7 +34,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="genel-ayarlar.php" class="nav-link ">
+                    <a href="index.php" class="nav-link ">
                         <span class="pcoded-micon"><i class="feather icon-settings"></i></span>
                         <span class="pcoded-mtext">Ana Sayfa</span>
                     </a>
@@ -48,7 +48,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="genel-ayarlar.php" class="nav-link ">
+                    <a href="projelerim.php" class="nav-link ">
                         <span class="pcoded-micon"><i class="feather icon-settings"></i></span>
                         <span class="pcoded-mtext">Projeler</span>
                     </a>
@@ -72,6 +72,14 @@
                     <a href="genel-ayarlar.php" class="nav-link ">
                         <span class="pcoded-micon"><i class="feather icon-settings"></i></span>
                         <span class="pcoded-mtext">Blog</span>
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a href="ben_neler_yaparim.php" class="nav-link ">
+                        <span class="pcoded-micon"><i class="feather icon-edit"></i></span>
+                        <span class="pcoded-mtext">Ben Neler Yaparım?</span>
                     </a>
                 </li>
 

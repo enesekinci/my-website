@@ -1,3 +1,41 @@
+<?php
+error_reporting(E_ALL);
+
+require('helper/functions.php');
+
+$database_host = "localhost";
+$database_name = "my_website";
+$database_user = "root";
+$database_password = "";
+
+$database = new PDO("mysql:host=" . $database_host . ";dbname=" . $database_name . ";charset=utf8", $database_user, $database_password);
+
+if (isset($_POST['submit'])) {
+
+    if (!empty($_FILES['logo']['tmp_name'])) {
+
+        $image_type = $_FILES['logo']['type'];
+
+        $image_type = explode('/', $image_type)[1];
+
+        // time() -> o anki tarihin unix değeri yani sayısal bir değer verir.
+        $new_name = time() . "." . $image_type;
+
+        $path = "assets/images/customers/";
+
+        $record_profile_photo_result = move_uploaded_file($_FILES['logo']['tmp_name'], $path . $new_name);
+
+        $query = $database->prepare("INSERT INTO customers SET title = ?, website = ?, logo = ?");
+        $result = $query->execute(array($_POST['title'], $_POST['website'], $new_name));
+
+        if ($result) {
+            $last_id = $database->lastInsertId();
+            print "insert işlemi başarılı! , $last_id";
+            header('location:musteriler.php');
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -180,47 +218,48 @@
             <div class="row">
                 <!-- [ form-element ] start -->
                 <div class="col-sm-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Müşteri Bilgileri</h5>
-                            <a href="musteriler.php" class="btn btn-success float-right"><i class="feather mr-2 icon-list"></i>Müşteriler</a>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
+                    <form action="" method="POST" id="new_content" enctype="multipart/form-data">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Müşteri Bilgileri</h5>
+                                <a href="musteriler.php" class="btn btn-success float-right"><i class="feather mr-2 icon-list"></i>Müşteriler</a>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="inputPassword">Ünvan</label>
-                                        <input type="text" class="form-control" id="inputPassword" placeholder="Ünvan">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="title">Ünvan</label>
+                                            <input type="text" class="form-control" id="title" name="title" placeholder="Ünvan" required>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="inputPassword">Site</label>
-                                        <input type="text" class="form-control" id="inputPassword" placeholder="Site">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="website">Site</label>
+                                            <input type="text" class="form-control" id="website" name="website" placeholder="Site" required>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="inputPassword">Logo</label>
-                                        <input type="file" class="form-control" id="inputPassword" placeholder="Logo">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="logo">Logo</label>
+                                            <input type="file" class="form-control" id="logo" name="logo" placeholder="Logo" required>
+                                        </div>
                                     </div>
+
                                 </div>
 
                             </div>
-
                         </div>
-                    </div>
-
-
-
-                    <div class="card">
-                        <div class="card-body">
-                            <button type="submit" class="btn  btn-primary">Sign in</button>
+                        <div class="card">
+                            <div class="card-body">
+                                <button type="submit" class="btn  btn-primary" name="submit" value="record">Kaydet</button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
+
+
                 </div>
                 <!-- [ form-element ] end -->
             </div>

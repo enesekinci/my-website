@@ -42,26 +42,7 @@
     <div id="page_container" class="page-container bg-move-effect" data-animation="transition-flip-in-right">
 
       <!-- Header -->
-      <header id="site_header" class="header">
-        <div class="header-content clearfix">
-
-          <!-- Text Logo -->
-          <div class="text-logo">
-            <a href="index.html">
-              <div class="logo-symbol">A</div>
-              <div class="logo-text">Alex <span>Smith</span></div>
-            </a>
-          </div>
-          <!-- /Text Logo -->
-
-          <?php require_once 'tema/menu.php' ?>
-
-
-          <a class="menu-toggle mobile-visible">
-            <i class="fa fa-bars"></i>
-          </a>
-        </div>
-      </header>
+      <?php require_once('tema/header.php'); ?>
       <!-- /Header -->
 
       <div id="main" class="site-main">

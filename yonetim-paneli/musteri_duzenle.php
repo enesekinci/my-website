@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+
 require('helper/functions.php');
 
 $database_host = "localhost";
@@ -10,16 +11,50 @@ $database_password = "";
 $database = new PDO("mysql:host=" . $database_host . ";dbname=" . $database_name . ";charset=utf8", $database_user, $database_password);
 
 
-if (isset($_GET['remove']) && isset($_GET['id'])) {
+$id = $_GET['id'];
+$customer = $database->query("SELECT * FROM customers WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
 
-    $query = $database->prepare("DELETE FROM customers WHERE id = ?");
-    $result = $query->execute(array($_GET['id']));
-    // burda bir satır silindi ama yukarısının bundna haberi yok.
+if (isset($_POST['submit'])) {
+
+    $image_path = $customer['logo'];
+    $old_image_path = $customer['logo'];
+
+    if (!empty($_FILES['logo']['tmp_name'])) {
+        /**
+         * resim yükleme başlangıç
+         */
+        $image_type = $_FILES['logo']['type'];
+
+        $image_type = explode('/', $image_type)[1];
+
+        // time() -> o anki tarihin unix değeri yani sayısal bir değer verir.
+        $new_name = time() . "." . $image_type;
+
+        $path = "assets/images/customers/";
+
+        $record_logo_result = move_uploaded_file($_FILES['logo']['tmp_name'], $path . $new_name);
+
+        if ($record_logo_result) {
+            // burada eski dosya silinebilir.
+            if (file_exists($path . $old_image_path)) {
+                unlink($path . $old_image_path);
+            }
+            $image_path = $new_name;
+        }
+        /**
+         * resim yükleme bitiş
+         */
+    }
+
+    $query = $database->prepare("UPDATE customers SET title = ?, website = ?,logo = ? WHERE id = ?");
+    $result = $query->execute(array($_POST['title'], $_POST['website'], $image_path, $id));
+
+    if ($result) {
+        $last_id = $database->lastInsertId();
+        print "update işlemi başarılı! , $last_id";
+        header('location:musteriler.php');
+    }
 }
-
-
-$customers = $database->query("SELECT * FROM customers", PDO::FETCH_ASSOC);
-// gelen veri diyelim ki 10 satır
 
 ?>
 <!DOCTYPE html>
@@ -202,57 +237,52 @@ $customers = $database->query("SELECT * FROM customers", PDO::FETCH_ASSOC);
             <!-- [ breadcrumb ] end -->
             <!-- [ Main Content ] start -->
             <div class="row">
-                <!-- [ Contextual-table ] start -->
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Contextual Classes</h5>
-                            <a href="musteri_ekle.php" class="btn btn-success float-right"><i class="feather mr-2 icon-plus"></i>Müşteri Ekle</a>
-                        </div>
-                        <div class="card-body table-border-style">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Logo</th>
-                                            <th>Ünvan</th>
-                                            <th>İşlemler</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($customers as $key => $customer) : ?>
-                                            <?php
-                                            /*
-                                                if ($key % 2 == 0) {
-                                                    echo "<tr class=\"table-active\">";
-                                                } else {
-                                                    echo "<tr class=\"\">";
-                                                }
-                                            */
+                <!-- [ form-element ] start -->
+                <div class="col-sm-12">
+                    <form action="" method="POST" id="new_content" enctype="multipart/form-data">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Müşteri Bilgileri</h5>
+                                <a href="musteriler.php" class="btn btn-success float-right"><i class="feather mr-2 icon-list"></i>Müşteriler</a>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
 
-                                            ?>
-                                            <tr class="<?= $key % 2 == 0 ? "table-active" : "" ?>">
-                                                <td><?= $key + 1 ?></td>
-                                                <td>
-                                                    <img src="assets/images/customers/<?= $customer['logo'] ?? '' ?>" width="50px" height="50px">
-                                                </td>
-                                                <td><?= $customer['title'] ?? '' ?></td>
-                                                <td>
-                                                    <a href="musteri_duzenle.php?id=<?= $customer['id'] ?>" class="btn  btn-icon btn-primary"><i class="feather icon-edit"></i></a>
-                                                    <a href="musteriler.php?remove=yes&id=<?= $customer['id'] ?>" class="btn btn-icon btn-danger text-white"><i class="feather icon-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="title">Ünvan</label>
+                                            <input type="text" class="form-control" id="title" name="title" placeholder="Ünvan" value="<?= $customer['title'] ?? '' ?>" required>
+                                        </div>
+                                    </div>
 
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="website">Site</label>
+                                            <input type="text" class="form-control" id="website" name="website" placeholder="Site" value="<?= $customer['website'] ?? '' ?>" required>
+                                        </div>
+                                    </div>
 
-                                    </tbody>
-                                </table>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="logo">Logo</label>
+                                            <input type="file" class="form-control" id="logo" name="logo" placeholder="Logo">
+                                        </div>
+                                    </div>
+
+                                </div>
+
                             </div>
                         </div>
-                    </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <button type="submit" class="btn  btn-primary" name="submit" value="update">Kaydet</button>
+                            </div>
+                        </div>
+                    </form>
+
                 </div>
-                <!-- [ Contextual-table ] end -->
+                <!-- [ form-element ] end -->
             </div>
             <!-- [ Main Content ] end -->
         </div>

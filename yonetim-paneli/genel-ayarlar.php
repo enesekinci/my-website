@@ -1,3 +1,101 @@
+<?php
+error_reporting(E_ALL);
+
+require('helper/functions.php');
+
+$database_host = "localhost";
+$database_name = "my_website";
+$database_user = "root";
+$database_password = "";
+
+$database = new PDO("mysql:host=" . $database_host . ";dbname=" . $database_name . ";charset=utf8", $database_user, $database_password);
+$general_settings = $database->query("SELECT * FROM general_settings WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+
+if (isset($_POST['submit'])) {
+    $name_surname = $_POST['name_surname'];
+    $job = $_POST['job'];
+    $phone = $_POST['phone'];
+    $password = $_POST['password'];
+    $address = $_POST['address'];
+    $about_me = $_POST['about_me'];
+    $profile_photo = $general_settings['profile_photo']; // eski ismi burdan geliyor yani yukarından databaseden (veritabanı)
+    $cv = $general_settings['cv'];
+    $email = $_POST['email'];
+    $email_host = $_POST['email_host'];
+    $email_port = $_POST['email_port'];
+    $email_password = $_POST['email_password'];
+    $facebook = $_POST['facebook'];
+    $instagram = $_POST['instagram'];
+    $twitter = $_POST['twitter'];
+    $linkedin = $_POST['linkedin'];
+    $github = $_POST['github'];
+    $gitlab = $_POST['gitlab'];
+    $youtube = $_POST['youtube'];
+
+    if (!empty($_FILES['profile_photo']['tmp_name'])) {
+
+        $image_type = $_FILES['profile_photo']['type'];
+
+        $image_type = explode('/', $image_type)[1];
+
+        // time() -> o anki tarihin unix değeri yani sayısal bir değer verir.
+        $new_name = time() . "." . $image_type;
+
+        $path = "assets/website/profile_photo/";
+
+        $record_profile_photo_result = move_uploaded_file($_FILES['profile_photo']['tmp_name'], $path . $new_name);
+
+        if ($record_profile_photo_result) {
+            // burada eski dosya silinebilir.
+            if (file_exists($path . $profile_photo)) {
+                unlink($path . $profile_photo);
+            }
+            $profile_photo = $new_name;
+        }
+    }
+
+    if (!empty($_FILES['cv']['tmp_name'])) {
+
+        $cv_type = $_FILES['cv']['type'];
+
+        $cv_type = explode('/', $cv_type)[1];
+
+        // time() -> o anki tarihin unix değeri yani sayısal bir değer verir.
+        $new_name = time() . "." . $cv_type;
+
+        $path = "assets/website/cv/";
+
+        $record_cv_result = move_uploaded_file($_FILES['cv']['tmp_name'], $path . $new_name);
+
+        if ($record_cv_result) {
+            // burada eski dosya silinebilir.
+            if (file_exists($path . $cv)) {
+                unlink($path . $cv);
+            }
+            $cv = $new_name;
+        }
+    }
+
+    $query = $database->prepare("UPDATE general_settings SET name_surname = ?, phone = ?, address = ?, 
+                                    about_me = ?, profile_photo = ?, cv = ?, email = ?, email_host = ?, 
+                                    email_port = ?, email_password = ?, facebook = ?, instagram = ?, 
+                                    twitter = ?, linkedin = ?, github = ?, gitlab = ?, youtube = ?, job = ?
+                                    WHERE id = 1");
+    $result = $query->execute(array(
+        $name_surname, $phone, $address, $about_me, $profile_photo,
+        $cv, $email, $email_host, $email_port, $email_password, $facebook,
+        $instagram, $twitter, $linkedin, $github, $gitlab, $youtube, $job
+    ));
+
+    // $query = $database->prepare("INSERT INTO general_settings SET name_surname = ?, phone = ?, address = ?, about_me = ?, profile_photo = ?, cv = ?, email = ?, email_host = ?, email_port = ?, email_password = ?, facebook = ?, instagram = ?, twitter = ?, linkedin = ?, github = ?, gitlab = ?, youtube = ?");
+
+    if ($result) {
+        $last_id = $database->lastInsertId();
+        print "insert işlemi başarılı! , $last_id";
+        header('location:genel-ayarlar.php');
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -179,207 +277,213 @@
             <!-- [ Main Content ] start -->
             <div class="row">
                 <!-- [ form-element ] start -->
-                <div class="col-sm-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Genel Ayarlar</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="inputPassword">Ad Soyad</label>
-                                        <input type="text" class="form-control" id="inputPassword" placeholder="Ad Soyad">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="inputPassword">Telefon</label>
-                                        <input type="text" class="form-control" id="inputPassword" placeholder="Telefon">
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="inputPassword">Password</label>
-                                        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="exampleFormControlTextarea2">Address</label>
-                                        <textarea class="form-control" id="exampleFormControlTextarea2" rows="3"></textarea>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="exampleFormControlTextarea1">Hakkımda Özet</label>
-                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="inputPassword">Profil Fotoğrafı</label>
-                                        <input type="file" class="form-control" id="inputPassword" placeholder="Profil Fotoğrafı">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="inputPassword">CV Yükle</label>
-                                        <input type="file" class="form-control" id="inputPassword" placeholder="CV Yükle">
-                                    </div>
-                                </div>
-
+                <form id="general_setting_form" method="POST" action="" enctype="multipart/form-data">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Genel Ayarlar</h5>
                             </div>
+                            <div class="card-body">
+                                <div class="row">
 
-                        </div>
-                    </div>
-
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>E-posta (SMTP) Ayarları</h5>
-                        </div>
-                        <div class="card-body">
-
-                            <div class="row">
-
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">E-posta</span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="name_surname">Ad Soyad</label>
+                                            <input type="text" class="form-control" id="name_surname" name="name_surname" placeholder="Ad Soyad" value="<?php echo $general_settings['name_surname'] ?? null; ?>" required>
                                         </div>
-                                        <input type="text" class="form-control" placeholder="E-posta" aria-label="E-posta" aria-describedby="basic-addon1">
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">Sunucu</span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="job">İş - Ünvan</label>
+                                            <input type="text" class="form-control" id="job" name="job" placeholder="İş - Ünvan" value="<?php echo $general_settings['job'] ?? null; ?>" required>
                                         </div>
-                                        <input type="text" class="form-control" placeholder="Sunucu" aria-label="Sunucu" aria-describedby="basic-addon1">
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">Port</span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="phone">Telefon</label>
+                                            <input type="text" class="form-control" id="phone" name="phone" placeholder="Telefon" value="<?php echo $general_settings['phone'] ?? null; ?>" required>
                                         </div>
-                                        <input type="text" class="form-control" placeholder="Port" aria-label="Port" aria-describedby="basic-addon1">
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">E-posta Parola</span>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="password">Parola</label>
+                                            <input type="password" class="form-control" id="password" name="password" placeholder="Parola">
                                         </div>
-                                        <input type="text" class="form-control" placeholder="E-posta Parola" aria-label="E-posta Parola" aria-describedby="basic-addon1">
                                     </div>
-                                </div>
 
+                                    <div class="col-md-6">
 
-                            </div>
-                        </div>
-                    </div>
+                                    </div>
 
-                    <!-- Input group -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Sosyal Medya Hesapları</h5>
-                        </div>
-                        <div class="card-body">
-
-                            <div class="row">
-
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">Facebook</span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="address">Adres</label>
+                                            <textarea class="form-control" id="address" name="address" rows="3" placeholder="Adres"><?php echo $general_settings['address'] ?? null; ?></textarea>
                                         </div>
-                                        <input type="text" class="form-control" placeholder="Facebook" aria-label="Facebook" aria-describedby="basic-addon1">
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">Instagram</span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="about_me">Hakkımda Özet</label>
+                                            <textarea class="form-control" id="about_me" name="about_me" rows="3" placeholder="Hakkımda Özet"><?php echo $general_settings['about_me'] ?? null; ?></textarea>
                                         </div>
-                                        <input type="text" class="form-control" placeholder="Instagram" aria-label="Instagram" aria-describedby="basic-addon1">
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">Twitter</span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="profile_photo">Profil Fotoğrafı</label>
+                                            <input type="file" class="form-control" id="profile_photo" name="profile_photo" placeholder="Profil Fotoğrafı">
                                         </div>
-                                        <input type="text" class="form-control" placeholder="Twitter" aria-label="Twitter" aria-describedby="basic-addon1">
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">Linkedin</span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="cv">CV Yükle</label>
+                                            <input type="file" class="form-control" id="cv" name="cv" placeholder="CV Yükle">
                                         </div>
-                                        <input type="text" class="form-control" placeholder="Linkedin" aria-label="Linkedin" aria-describedby="basic-addon1">
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">Github</span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Github" aria-label="Github" aria-describedby="basic-addon1">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">Gitlab</span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Gitlab" aria-label="Gitlab" aria-describedby="basic-addon1">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">Youtube</span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Youtube" aria-label="Youtube" aria-describedby="basic-addon1">
-                                    </div>
                                 </div>
 
                             </div>
                         </div>
-                    </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>E-posta (SMTP) Ayarları</h5>
+                            </div>
+                            <div class="card-body">
+
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="email">E-posta</span>
+                                            </div>
+                                            <input type="text" class="form-control" id="email" name="email" placeholder="E-posta" aria-label="E-posta" aria-describedby="email" value="<?php echo $general_settings['email'] ?? null; ?>" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="email_host">Sunucu</span>
+                                            </div>
+                                            <input type="text" class="form-control" id="email_host" name="email_host" placeholder="Sunucu" aria-label="Sunucu" value="<?php echo $general_settings['email_host'] ?? null; ?>" aria-describedby="email_host">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="email_port">Port</span>
+                                            </div>
+                                            <input type="text" class="form-control" id="email_port" name="email_port" placeholder="Port" value="<?php echo $general_settings['email_port'] ?? null; ?>" aria-label="Port" aria-describedby="email_port">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="email_password">E-posta Parola</span>
+                                            </div>
+                                            <input type="text" class="form-control" id="email_password" name="email_password" value="<?php echo $general_settings['email_password'] ?? null; ?>" placeholder="E-posta Parola" aria-label="E-posta Parola" aria-describedby="basic-addon1">
+                                        </div>
+                                    </div>
 
 
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="card">
-                        <div class="card-body">
-                            <button type="submit" class="btn  btn-primary">Sign in</button>
+                        <!-- Input group -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Sosyal Medya Hesapları</h5>
+                            </div>
+                            <div class="card-body">
+
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="facebook">Facebook</span>
+                                            </div>
+                                            <input type="text" class="form-control" id="facebook" value="<?php echo $general_settings['facebook'] ?? null; ?>" name="facebook" placeholder="Facebook" aria-label="Facebook" aria-describedby="facebook">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="instagram">Instagram</span>
+                                            </div>
+                                            <input type="text" class="form-control" id="instagram" value="<?php echo $general_settings['instagram'] ?? null; ?>" name="instagram" placeholder="Instagram" aria-label="Instagram" aria-describedby="instagram">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="twitter">Twitter</span>
+                                            </div>
+                                            <input type="text" class="form-control" id="twitter" value="<?php echo $general_settings['twitter'] ?? null; ?>" name="twitter" placeholder="Twitter" aria-label="Twitter" aria-describedby="twitter">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="linkedin">Linkedin</span>
+                                            </div>
+                                            <input type="text" class="form-control" id="linkedin" value="<?php echo $general_settings['linkedin'] ?? null; ?>" name="linkedin" placeholder="Linkedin" aria-label="Linkedin" aria-describedby="linkedin">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="github">Github</span>
+                                            </div>
+                                            <input type="text" class="form-control" id="github" value="<?php echo $general_settings['github'] ?? null; ?>" name="github" placeholder="Github" aria-label="Github" aria-describedby="github">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="gitlab">Gitlab</span>
+                                            </div>
+                                            <input type="text" class="form-control" id="gitlab" value="<?php echo $general_settings['gitlab'] ?? null; ?>" name="gitlab" placeholder="Gitlab" aria-label="Gitlab" aria-describedby="basic-addon1">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="youtube">Youtube</span>
+                                            </div>
+                                            <input type="text" class="form-control" id="youtube" value="<?php echo $general_settings['youtube'] ?? null; ?>" name="youtube" placeholder="Youtube" aria-label="Youtube" aria-describedby="youtube">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <button type="submit" class="btn  btn-primary" name="submit" value="record">Kaydet</button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
                 <!-- [ form-element ] end -->
             </div>
             <!-- [ Main Content ] end -->

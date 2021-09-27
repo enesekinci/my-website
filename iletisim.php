@@ -1,12 +1,20 @@
-﻿<!DOCTYPE html>
+﻿<?php
+$database_host = "localhost";
+$database_name = "my_website";
+$database_user = "root";
+$database_password = "";
+$database = new PDO("mysql:host=" . $database_host . ";dbname=" . $database_name . ";charset=utf8", $database_user, $database_password);
+$general_settings = $database->query("SELECT * FROM general_settings WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+?>
+<!DOCTYPE html>
 <html lang="en" class="no-js">
 
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Leven - Resume / CV / vCard Template</title>
+  <title><?php echo ($general_settings['name_surname'] ?? '') . ' - Kişisel Sitem'; ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="description" content="Leven - Resume / CV / vCard Template">
+  <meta name="description" content="<?php echo ($general_settings['name_surname'] ?? '') . ' - Kişisel Sitem'; ?>">
   <meta name="keywords" content="vcard, resposnive, retina, resume, jquery, css3, bootstrap, portfolio">
   <meta name="author" content="lmpixels">
   <link rel="shortcut icon" href="favicon.ico">
@@ -18,7 +26,6 @@
   <link rel="stylesheet" href="css\main.css" type="text/css">
 
   <script src="js\modernizr.custom.js"></script>
-  <script async="" src='/cdn-cgi/challenge-platform/h/g/scripts/invisible.js'></script>
 </head>
 
 <body class="page">
@@ -42,25 +49,7 @@
     <div id="page_container" class="page-container bg-move-effect" data-animation="transition-flip-in-right">
 
       <!-- Header -->
-      <header id="site_header" class="header">
-        <div class="header-content clearfix">
-
-          <!-- Text Logo -->
-          <div class="text-logo">
-            <a href="index.html">
-              <div class="logo-symbol">A</div>
-              <div class="logo-text">Alex <span>Smith</span></div>
-            </a>
-          </div>
-          <!-- /Text Logo -->
-
-          <?php require_once 'tema/menu.php' ?>
-
-          <a class="menu-toggle mobile-visible">
-            <i class="fa fa-bars"></i>
-          </a>
-        </div>
-      </header>
+      <?php require_once('tema/header.php'); ?>
       <!-- /Header -->
 
       <div id="main" class="site-main">
@@ -68,9 +57,9 @@
           <div id="primary" class="content-area">
 
             <div class="page-title">
-              <h1>Contact</h1>
+              <h1>İletişim</h1>
               <div class="page-subtitle">
-                <h4> Get in Touch</h4>
+                <h4> Benimle İletişim Kurun</h4>
               </div>
             </div>
 
@@ -92,8 +81,7 @@
                         <i class="linecons linecons-phone"></i>
                       </div>
                       <div class="ci-text">
-                        <h4>415-832-2000</h4>
-                        <p>Duis erat leo, aliquam laoreet fringilla quis, pretium vitae dui.</p>
+                        <h4><a href="tel:+<?= $general_settings['phone'] ?? '' ?>">+<?= $general_settings['phone'] ?? '' ?></a></h4>
                       </div>
                     </div>
 
@@ -102,8 +90,7 @@
                         <i class="linecons linecons-location"></i>
                       </div>
                       <div class="ci-text">
-                        <h4>San Francisco</h4>
-                        <p>Duis erat leo, aliquam laoreet fringilla quis, pretium vitae dui.</p>
+                        <h4><?= $general_settings['address'] ?? '' ?></h4>
                       </div>
                     </div>
 
@@ -112,8 +99,7 @@
                         <i class="linecons linecons-mail"></i>
                       </div>
                       <div class="ci-text">
-                        <h4><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="264e434a4a4966435e474b564a430845494b">[email&#160;protected]</a></h4>
-                        <p>Duis erat leo, aliquam laoreet fringilla quis, pretium vitae dui.</p>
+                        <h4><a href="mailto:<?= $general_settings['email'] ?? '' ?>"><?= $general_settings['email'] ?? '' ?></a></h4>
                       </div>
                     </div>
                   </div>
@@ -177,55 +163,20 @@
         </div>
       </div>
 
-      <footer class="site-footer clearfix">
-        <div class="footer-social">
-          <ul class="footer-social-links">
-            <li>
-              <a href="#" target="_blank">Twitter</a>
-            </li>
-
-            <li>
-              <a href="#" target="_blank">Facebook</a>
-            </li>
-
-            <li>
-              <a href="#" target="_blank">Instagram</a>
-            </li>
-          </ul>
-        </div>
-
-        <div class="footer-copyrights">
-          <p>© 2020 All rights reserved. LMPixels.</p>
-        </div>
-      </footer>
+      <?php require_once('tema/footer.php'); ?>
 
     </div>
   </div>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
   <script src="js\jquery-2.1.3.min.js"></script>
   <script src="js\imagesloaded.pkgd.min.js"></script>
-  <script src='https://www.google.com/recaptcha/api.js'></script>
   <script src="js\bootstrap.min.js"></script>
   <script src='js\jquery.shuffle.min.js'></script>
   <script src='js\masonry.pkgd.min.js'></script>
   <script src='js\owl.carousel.min.js'></script>
   <script src="js\jquery.magnific-popup.min.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrDf32aQTCVENBhFJbMBKOUTiUAABtC2o"></script>
-  <script src="js\jquery.googlemap.js"></script>
   <script src="js\validator.js"></script>
   <script src="js\main.js"></script>
-  <script type="text/javascript">
-    (function() {
-      window['__CF$cv$params'] = {
-        r: '68e7b5bae8abcb4e',
-        m: 'oZ3wlwVrvZspf0XY2eKxNNG4rfsd7_Y6QCMeW4TiNUo-1631602528-0-AZjlXwtgXLdhMRNWRE/K1C4xEZGCOeNBAYM72utPmr9OYLVjHz24CYVYO3asS3cAcg3oHyucVUKAddMjgcIVB+aHe3YROm439qc+KUuGnM6Aw3HzpK7XbhAgnBlMOKQDu+BdlEp9rxUZthS/ge+kvVSxU2n5cTo1p9xnIWamP3+krcfOPflWGaeWI1UvgYvqfA==',
-        s: [0xe8f0fc1edf, 0x635f9e704e],
-        u: '/cdn-cgi/challenge-platform/h/g'
-      }
-    })();
-  </script>
-  <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"rayId":"68e7b5bae8abcb4e","version":"2021.8.1","r":1,"token":"94b99c0576dc45bf9d669fb5e9256829","si":10}'></script>
 </body>
 
 </html>

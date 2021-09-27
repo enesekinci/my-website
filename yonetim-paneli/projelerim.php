@@ -12,13 +12,13 @@ $database = new PDO("mysql:host=" . $database_host . ";dbname=" . $database_name
 
 if (isset($_GET['remove']) && isset($_GET['id'])) {
 
-    $query = $database->prepare("DELETE FROM customers WHERE id = ?");
+    $query = $database->prepare("DELETE FROM projects WHERE id = ?");
     $result = $query->execute(array($_GET['id']));
     // burda bir satır silindi ama yukarısının bundna haberi yok.
 }
 
 
-$customers = $database->query("SELECT * FROM customers", PDO::FETCH_ASSOC);
+$projects = $database->query("SELECT * FROM projects", PDO::FETCH_ASSOC);
 // gelen veri diyelim ki 10 satır
 
 ?>
@@ -207,7 +207,7 @@ $customers = $database->query("SELECT * FROM customers", PDO::FETCH_ASSOC);
                     <div class="card">
                         <div class="card-header">
                             <h5>Contextual Classes</h5>
-                            <a href="musteri_ekle.php" class="btn btn-success float-right"><i class="feather mr-2 icon-plus"></i>Müşteri Ekle</a>
+                            <a href="proje_ekle.php" class="btn btn-success float-right"><i class="feather mr-2 icon-plus"></i>İçerik Ekle</a>
                         </div>
                         <div class="card-body table-border-style">
                             <div class="table-responsive">
@@ -215,37 +215,25 @@ $customers = $database->query("SELECT * FROM customers", PDO::FETCH_ASSOC);
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Logo</th>
-                                            <th>Ünvan</th>
+                                            <th>Başlık</th>
+                                            <th>Özet</th>
+                                            <th>Link</th>
                                             <th>İşlemler</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($customers as $key => $customer) : ?>
-                                            <?php
-                                            /*
-                                                if ($key % 2 == 0) {
-                                                    echo "<tr class=\"table-active\">";
-                                                } else {
-                                                    echo "<tr class=\"\">";
-                                                }
-                                            */
-
-                                            ?>
+                                        <?php foreach ($projects as $key => $project) : ?>
                                             <tr class="<?= $key % 2 == 0 ? "table-active" : "" ?>">
-                                                <td><?= $key + 1 ?></td>
+                                                <td style="white-space: normal;"><?= $key + 1 ?></td>
+                                                <td style="white-space: normal;"><?= $project['title'] ?? '' ?></td>
+                                                <td style="white-space: normal;"><?= $project['summary'] ?? '' ?></td>
+                                                <td style="white-space: normal;"><?= $project['link'] ?? '#' ?></td>
                                                 <td>
-                                                    <img src="assets/images/customers/<?= $customer['logo'] ?? '' ?>" width="50px" height="50px">
-                                                </td>
-                                                <td><?= $customer['title'] ?? '' ?></td>
-                                                <td>
-                                                    <a href="musteri_duzenle.php?id=<?= $customer['id'] ?>" class="btn  btn-icon btn-primary"><i class="feather icon-edit"></i></a>
-                                                    <a href="musteriler.php?remove=yes&id=<?= $customer['id'] ?>" class="btn btn-icon btn-danger text-white"><i class="feather icon-trash"></i></a>
+                                                    <a href="proje_duzenle.php?id=<?= $project['id'] ?>" class="btn  btn-icon btn-primary"><i class="feather icon-edit"></i></a>
+                                                    <a href="projelerim.php?remove=yes&id=<?= $project['id'] ?>" class="btn btn-icon btn-danger text-white"><i class="feather icon-trash"></i></a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
-
-
                                     </tbody>
                                 </table>
                             </div>
