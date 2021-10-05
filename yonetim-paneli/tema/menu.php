@@ -54,22 +54,24 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="genel-ayarlar.php" class="nav-link ">
-                        <span class="pcoded-micon"><i class="feather icon-settings"></i></span>
-                        <span class="pcoded-mtext">Deneyimler</span>
-                    </a>
+                <li class="nav-item pcoded-hasmenu">
+                    <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Deneyimler</span></a>
+                    <ul class="pcoded-submenu">
+                        <li><a href="egitimler.php">Eğitimler</a></li>
+                        <li><a href="tecrubeler.php">Tecrübeler</a></li>
+                        <li><a href="yetenekler.php">Yetenekler</a></li>
+                    </ul>
                 </li>
 
                 <li class="nav-item">
-                    <a href="genel-ayarlar.php" class="nav-link ">
+                    <a href="referanslar.php" class="nav-link ">
                         <span class="pcoded-micon"><i class="feather icon-settings"></i></span>
                         <span class="pcoded-mtext">Referanslar</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="genel-ayarlar.php" class="nav-link ">
+                    <a href="blog.php" class="nav-link ">
                         <span class="pcoded-micon"><i class="feather icon-settings"></i></span>
                         <span class="pcoded-mtext">Blog</span>
                     </a>

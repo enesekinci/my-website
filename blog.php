@@ -1,4 +1,20 @@
-﻿<!DOCTYPE html>
+﻿<?php
+
+require_once('yonetim-paneli/helper/functions.php');
+
+$database_host = "localhost";
+$database_name = "my_website";
+$database_user = "root";
+$database_password = "";
+
+$database = new PDO("mysql:host=" . $database_host . ";dbname=" . $database_name . ";charset=utf8", $database_user, $database_password);
+
+$general_settings = $database->query("SELECT * FROM general_settings WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+
+$blogs = $database->query("SELECT * FROM `blogs`", PDO::FETCH_ASSOC);
+
+?>
+<!DOCTYPE html>
 <html lang="en" class="no-js">
 
 <head>
@@ -18,7 +34,6 @@
   <link rel="stylesheet" href="css\main.css" type="text/css">
 
   <script src="js\modernizr.custom.js"></script>
-  <script async="" src='/cdn-cgi/challenge-platform/h/g/scripts/invisible.js'></script>
 </head>
 
 <body class="page">
@@ -62,141 +77,35 @@
                 <div class=" col-xs-12 col-sm-12 ">
 
                   <div class="blog-masonry three-columns clearfix">
-                    <!-- Blog Post 1 -->
-                    <div class="item">
-                      <div class="blog-card">
-                        <div class="media-block">
-                          <div class="category">
-                            <a href="#" title="View all posts in WordPress">WordPress</a>
+
+
+                    <?php foreach ($blogs as $key => $blog) : ?>
+                      <!-- Blog Post <?= $key ?> -->
+                      <div class="item">
+                        <div class="blog-card">
+                          <div class="media-block">
+                            <div class="category">
+                              <a href="#" title="View all posts in WordPress"><?= $blog['title'] ?? '-' ?></a>
+                            </div>
+                            <a href="blog-detay.php?id=<?= $blog['id'] ?? '-' ?>">
+                              <img src="yonetim-paneli/assets/images/blog/<?= $blog['image'] ?? null ?>" alt="<?= $blog['title'] ?? '-'  ?>" title="<?= $blog['title'] ?? '-'  ?>">
+                              <div class="mask"></div>
+                            </a>
                           </div>
-                          <a href="blog-post-1.html">
-                            <img src="img\blog\blog_post_1.jpg" alt="How to Make a WordPress Plugin Extensible" title="">
-                            <div class="mask"></div>
-                          </a>
-                        </div>
-                        <div class="post-info">
-                          <div class="post-date">04 Dec 2019</div>
-                          <a href="blog-post-1.html">
-                            <h4 class="blog-item-title">How to Make a WordPress Plugin Extensible</h4>
-                          </a>
+                          <div class="post-info">
+                            <div class="post-date"><?= $blog['date'] ?? '-' ?></div>
+                            <a href="blog-detay.php?id=<?= $blog['id'] ?? '-' ?>">
+                              <h4 class="blog-item-title"><?= substr(strip_tags($blog['content']), 0, 150) ?? '-' ?>...</h4>
+                            </a>
+
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <!-- End of Blog Post 1 -->
-
-                    <!-- Blog Post 2 -->
-                    <div class="item">
-                      <div class="blog-card">
-                        <div class="media-block">
-                          <div class="category">
-                            <a href="#" title="View all posts in Design">Design</a>
-                          </div>
-
-                          <a href="blog-post-1.html">
-                            <img src="img\blog\blog_post_2.jpg" alt="6 Easy Steps to Better Icon Design" title="">
-                            <div class="mask"></div>
-                          </a>
-                        </div>
-                        <div class="post-info">
-                          <div class="post-date">04 Dec 2019</div>
-                          <a href="blog-post-1.html">
-                            <h4 class="blog-item-title">6 Easy Steps to Better Icon Design</h4>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- End of Blog Post 2 -->
-
-                    <!-- Blog Post 3 -->
-                    <div class="item">
-                      <div class="blog-card">
-                        <div class="media-block">
-                          <div class="category">
-                            <a href="#" title="View all posts in UI">UI</a>
-                          </div>
-                          <a href="blog-post-1.html">
-                            <img src="img\blog\blog_post_3.jpg" alt="Creative and Innovative Navigation Designs" title="">
-                            <div class="mask"></div>
-                          </a>
-                        </div>
-                        <div class="post-info">
-                          <div class="post-date">04 Dec 2019</div>
-                          <a href="blog-post-1.html">
-                            <h4 class="blog-item-title">Creative and Innovative Navigation Designs</h4>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- End of Blog Post 3 -->
-
-                    <!-- Blog Post 4 -->
-                    <div class="item">
-                      <div class="blog-card">
-                        <div class="media-block">
-                          <div class="category">
-                            <a href="#" title="View all posts in Design">Design</a>
-                          </div>
-                          <a href="blog-post-1.html">
-                            <img src="img\blog\blog_post_4.jpg" alt="Why I Switched to Sketch For UI Design" title="">
-                            <div class="mask"></div>
-                          </a>
-                        </div>
-                        <div class="post-info">
-                          <div class="post-date">04 Dec 2019</div>
-                          <a href="blog-post-1.html">
-                            <h4 class="blog-item-title">Why I Switched to Sketch For UI Design</h4>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- End of Blog Post 4 -->
-
-                    <!-- Blog Post 5 -->
-                    <div class="item">
-                      <div class="blog-card">
-                        <div class="media-block">
-                          <div class="category">
-                            <a href="#" title="View all posts in E-Commerce">E-Commerce</a>
-                          </div>
-                          <a href="blog-post-1.html">
-                            <img src="img\blog\blog_post_5.jpg" alt="An Overview of E-Commerce Platforms" title="">
-                            <div class="mask"></div>
-                          </a>
-                        </div>
-                        <div class="post-info">
-                          <div class="post-date">04 Dec 2019</div>
-                          <a href="blog-post-1.html">
-                            <h4 class="blog-item-title">An Overview of E-Commerce Platforms</h4>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- End of Blog Post 5 -->
-
-                    <!-- Blog Post 6 -->
-                    <div class="item">
-                      <div class="blog-card">
-                        <div class="media-block">
-                          <div class="category">
-                            <a href="#" title="View all posts in E-Commerce">E-Commerce</a>
-                          </div>
-                          <a href="blog-post-1.html">
-                            <img src="img\blog\blog_post_6.jpg" alt="Designing the Perfect Feature Comparison Table" title="">
-                            <div class="mask"></div>
-                          </a>
-                        </div>
-                        <div class="post-info">
-                          <div class="post-date">04 Dec 2019</div>
-                          <a href="blog-post-1.html">
-                            <h4 class="blog-item-title">Designing the Perfect Feature Comparison Table</h4>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- End of Blog Post 6 -->
+                      <!-- End of Blog Post <?= $key ?> -->
+                    <?php endforeach; ?>
                   </div>
 
-                  <a class="btn btn-primary" href="#">See All Posts</a>
+                  <!-- <a class="btn btn-primary" href="#">See All Posts</a> -->
                 </div>
               </div>
 
@@ -205,54 +114,22 @@
         </div>
       </div>
 
-      <footer class="site-footer clearfix">
-        <div class="footer-social">
-          <ul class="footer-social-links">
-            <li>
-              <a href="#" target="_blank">Twitter</a>
-            </li>
-
-            <li>
-              <a href="#" target="_blank">Facebook</a>
-            </li>
-
-            <li>
-              <a href="#" target="_blank">Instagram</a>
-            </li>
-          </ul>
-        </div>
-
-        <div class="footer-copyrights">
-          <p>© 2020 All rights reserved. LMPixels.</p>
-        </div>
-      </footer>
+      <!-- Footer -->
+      <?php require_once('tema/footer.php'); ?>
+      <!-- /Footer -->
 
     </div>
   </div>
 
   <script src="js\jquery-2.1.3.min.js"></script>
   <script src="js\imagesloaded.pkgd.min.js"></script>
-  <script src='https://www.google.com/recaptcha/api.js'></script>
   <script src="js\bootstrap.min.js"></script>
   <script src='js\jquery.shuffle.min.js'></script>
   <script src='js\masonry.pkgd.min.js'></script>
   <script src='js\owl.carousel.min.js'></script>
   <script src="js\jquery.magnific-popup.min.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrDf32aQTCVENBhFJbMBKOUTiUAABtC2o"></script>
-  <script src="js\jquery.googlemap.js"></script>
   <script src="js\validator.js"></script>
   <script src="js\main.js"></script>
-  <script type="text/javascript">
-    (function() {
-      window['__CF$cv$params'] = {
-        r: '68e7b5b80fb6cb4e',
-        m: 'z1dLaUvmLS8s1n.GjghojvVCIfKInfFumYkaXONdVEY-1631602528-0-AaVxIP7Dp89SdHdlAYvzwN06vXS3wjV9jRqFdnXJnbLkuDAYeFbzWGZMnW3ufHHy9e194DzWHazQ7DngrzXsR+k0gkHcikD9z8gKpnH6Eya/amHAuAwKIP2vN509GYXZ9S1ZrBuxL/fiJVn/X2Q8NF8QA1kP1SdOljWovISvZqbWDGZ5KRcZwDnifWxDcVPGdg==',
-        s: [0x6d0aeb3a73, 0x97e9ea519b],
-        u: '/cdn-cgi/challenge-platform/h/g'
-      }
-    })();
-  </script>
-  <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"rayId":"68e7b5b80fb6cb4e","version":"2021.8.1","r":1,"token":"94b99c0576dc45bf9d669fb5e9256829","si":10}'></script>
 </body>
 
 </html>

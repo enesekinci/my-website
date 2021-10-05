@@ -1,4 +1,22 @@
-﻿<!DOCTYPE html>
+﻿<?php
+
+require_once('yonetim-paneli/helper/functions.php');
+
+$database_host = "localhost";
+$database_name = "my_website";
+$database_user = "root";
+$database_password = "";
+
+$database = new PDO("mysql:host=" . $database_host . ";dbname=" . $database_name . ";charset=utf8", $database_user, $database_password);
+
+$general_settings = $database->query("SELECT * FROM general_settings WHERE id = 1")->fetch(PDO::FETCH_ASSOC);
+
+
+$id = $_GET['id'];
+$blog = $database->query("SELECT * FROM `blogs` WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
+
+?>
+<!DOCTYPE html>
 <html lang="en" class="no-js">
 
 <head>
@@ -17,7 +35,6 @@
   <link rel="stylesheet" href="css\owl.carousel.css" type="text/css">
   <link rel="stylesheet" href="css\magnific-popup.css" type="text/css">
   <link rel="stylesheet" href="css\main.css" type="text/css">
-  <script async="" src='/cdn-cgi/challenge-platform/h/g/scripts/invisible.js'></script>
 </head>
 
 <body class="page">
@@ -52,15 +69,12 @@
               <article class="post">
 
                 <header class="entry-header">
-                  <div class="entry-meta entry-meta-top">
-                    <span><a href="#" rel="category tag">WordPress</a></span>
-                  </div><!-- .entry-meta -->
 
-                  <h2 class="entry-title">How to Make a WordPress Plugin Extensible</h2>
+                  <h2 class="entry-title"><?= $blog['title'] ?? '-' ?></h2>
                 </header><!-- .entry-header -->
 
                 <div class="post-thumbnail">
-                  <img src="img\blog\blog_post_1_full.jpg" alt="">
+                  <img src="yonetim-paneli/assets/images/blog/<?= $blog['image'] ?? null ?>" alt="<?= $blog['title'] ?? '-'  ?>">
                 </div>
 
                 <div class="post-content">
@@ -68,30 +82,7 @@
 
                     <div class="row">
                       <div class=" col-xs-12 col-sm-12 ">
-
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam cursus lorem a turpis feugiat, et porttitor leo dapibus. In ut tincidunt lectus, id hendrerit enim. Maecenas at nibh eu nulla dignissim posuere. Nullam viverra vitae elit a tempus. Donec quis eleifend eros. Donec imperdiet nisi mi, in ultricies risus porta ac. Nullam laoreet convallis nibh sed congue. Donec nulla ipsum, tincidunt a augue maximus, pellentesque imperdiet lectus. Aenean posuere consequat libero, id efficitur quam dictum volutpat.</p>
-
-                        <p>Donec mollis a lacus a pharetra. Nam facilisis enim erat, in scelerisque eros mollis quis. Aliquam erat volutpat. Nam vel nibh justo. Nunc vestibulum leo a ultricies malesuada. Proin quis volutpat sem. Morbi consequat lacinia pulvinar.</p>
-
-                        <div class="single-image ">
-                          <a href="img\blog\blog_post_2_full.jpg" class="lightbox">
-                            <img src="img\blog\blog_post_2_full.jpg" alt="image">
-                          </a>
-                        </div>
-
-                        <p>Cras commodo, nulla a commodo sodales, nisl mauris interdum lectus, ac mattis lacus purus ut nunc. Fusce volutpat aliquam euismod. Aliquam pulvinar neque turpis, in tincidunt mi varius et. Curabitur vitae tempus mauris, porta dictum ante. Nam pellentesque et mauris a suscipit. Vivamus gravida erat nec elit ullamcorper, quis laoreet metus efficitur. Duis vulputate, mauris a auctor pretium, elit nisl eleifend nulla, non accumsan augue massa quis tellus. Aliquam at justo libero.</p>
-                        <p>Donec mollis a lacus a pharetra. Nam facilisis enim erat, in scelerisque eros mollis quis. Aliquam erat volutpat. Nam vel nibh justo. Nunc vestibulum leo a ultricies malesuada. Proin quis volutpat sem. Morbi consequat lacinia pulvinar.</p>
-
-                        <blockquote class="quote fw-quote-left fw-quote-md ">
-                          <p>Mauris lectus dolor, varius ut imperdiet nec, dignissim nec ligula. Cras posuere odio et finibus accumsan. Mauris in sem non arcu consectetur posuere sed quis justo. Sed turpis mauris, aliquet ac lacus nec, tempor condimentum justo.</p>
-                          <footer class="quote-author">
-                            <span>Edgar D. Wang</span>
-                          </footer>
-                        </blockquote>
-
-                        <p>Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vestibulum mauris condimentum ultrices scelerisque. Fusce pulvinar cursus luctus. Cras dapibus placerat magna, quis euismod nisi consequat euismod. Curabitur finibus nisi at justo ultricies, nec congue metus rutrum. Quisque vulputate sollicitudin aliquam. Curabitur posuere auctor dapibus.</p>
-
-                        <p>Donec mollis a lacus a pharetra. Nam facilisis enim erat, in scelerisque eros mollis quis. Aliquam erat volutpat. Nam vel nibh justo. Nunc vestibulum leo a ultricies malesuada. Proin quis volutpat sem. Morbi consequat lacinia pulvinar.</p>
+                        <?= $blog['content'] ?? '' ?>
 
                       </div>
                     </div>
@@ -104,78 +95,43 @@
                       <span class="entry-date">
                         <a href="#" rel="bookmark">
                           <i class="far fa-clock"></i>
-                          <time class="entry-date" datetime="2020-04-04T08:29:37+00:00"> December 4, 2019</time>
-                        </a>
-                      </span>
-
-                      <span class="author vcard">
-                        <a class="url fn n" href="#" rel="author">
-                          <i class="fas fa-user"></i>
-                          <span> Leven</span>
+                          <time class="entry-date" datetime="<?= $blog['date'] ?? '-' ?>"><?= $blog['date'] ?? '-' ?></time>
                         </a>
                       </span>
                     </div>
 
                     <!-- Share Buttons -->
                     <div class="entry-share btn-group share-buttons">
-                      <a href="https://www.facebook.com/sharer/sharer.php?u=http://example.com/" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;" class="btn" target="_blank" title="Share on Facebook">
+                      <a href="https://www.facebook.com/sharer/sharer.php?u=<?= 'http://localhost' . $_SERVER['REQUEST_URI'] ?>" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;" class="btn" target="_blank" title="Share on Facebook">
                         <i class="fab fa-facebook-f"></i>
                       </a>
 
-                      <a href="https://twitter.com/share?url=http://example.com/" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;" class="btn" target="_blank" title="Share on Twitter">
+                      <a href="https://twitter.com/share?url=<?= 'http://localhost' . $_SERVER['REQUEST_URI'] ?>" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;" class="btn" target="_blank" title="Share on Twitter">
                         <i class="fab fa-twitter"></i>
                       </a>
 
-                      <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://example.com/" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" class="btn" title="Share on LinkedIn">
+                      <a href="https://www.linkedin.com/shareArticle?mini=true&url=<?= 'http://localhost' . $_SERVER['REQUEST_URI'] ?>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" class="btn" title="Share on LinkedIn">
                         <i class="fab fa-linkedin-in"></i>
                       </a>
 
-                      <a href="http://www.digg.com/submit?url=http://example.com/" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" class="btn" title="Share on Digg">
+                      <a href="http://www.digg.com/submit?url=<?= 'http://localhost' . $_SERVER['REQUEST_URI'] ?>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" class="btn" title="Share on Digg">
                         <i class="fab fa-digg"></i>
                       </a>
                     </div>
                     <!-- /Share Buttons -->
                   </div>
 
-                  <div class="post-tags">
-                    <span class="tags">
-                      <a href="#" rel="tag">design</a>
-                      <a href="#" rel="tag">plugin</a>
-                      <a href="#" rel="tag">WordPress</a>
-                    </span>
-                  </div>
                 </div>
               </article>
-
-
-
 
             </div>
           </div>
         </div>
       </div>
 
-      <footer class="site-footer clearfix">
-        <div class="footer-social">
-          <ul class="footer-social-links">
-            <li>
-              <a href="#" target="_blank">Twitter</a>
-            </li>
-
-            <li>
-              <a href="#" target="_blank">Facebook</a>
-            </li>
-
-            <li>
-              <a href="#" target="_blank">Instagram</a>
-            </li>
-          </ul>
-        </div>
-
-        <div class="footer-copyrights">
-          <p>© 2020 All rights reserved. LMPixels.</p>
-        </div>
-      </footer>
+      <!-- Footer -->
+      <?php require_once('tema/footer.php'); ?>
+      <!-- /Footer -->
 
     </div>
   </div>
@@ -184,7 +140,6 @@
   <script src="js\modernizr.custom.js"></script>
 
   <script src="js\imagesloaded.pkgd.min.js"></script>
-  <script src='https://www.google.com/recaptcha/api.js'></script>
 
   <script src="js\bootstrap.min.js"></script>
 
@@ -193,21 +148,8 @@
   <script src='js\owl.carousel.min.js'></script>
   <script src="js\jquery.magnific-popup.min.js"></script>
 
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrDf32aQTCVENBhFJbMBKOUTiUAABtC2o"></script>
-  <script src="js\jquery.googlemap.js"></script>
   <script src="js\validator.js"></script>
   <script src="js\main.js"></script>
-  <script type="text/javascript">
-    (function() {
-      window['__CF$cv$params'] = {
-        r: '68e7b604add0cb4e',
-        m: 'h_2hyWpOUgDD0o61cA1QO99Dhc9NppbDQDHe.A95sQ8-1631602540-0-AausPJ3zoTVn9hrTaBpm1EH4NrfDpBTJVaBRxZnIck5lWiDIq2iAjM+2m4XBPEXexjBMhXu6+YpXdzCi6QgITiOJWDVqgSPNGNTAvIP/q4gsm7BbY74rb35Wh+9u/ab++zvpJMHCe8Uj3w4615WDoKBKTegcMZ/n9URSiyPXaIFRu5vPBGCJZ4qBfJWt5QS1hg==',
-        s: [0xc5d77a1a8c, 0xfb79b0a25f],
-        u: '/cdn-cgi/challenge-platform/h/g'
-      }
-    })();
-  </script>
-  <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"rayId":"68e7b604add0cb4e","version":"2021.8.1","r":1,"token":"94b99c0576dc45bf9d669fb5e9256829","si":10}'></script>
 </body>
 
 </html>
